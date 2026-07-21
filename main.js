@@ -1,109 +1,156 @@
-/**
- * main.js — застосовує дані з values.js до DOM
- * Всі змінні (fio, birth і т.д.) визначені у values.js
- * Запускається після того, як DOM готовий
- */
-(function () {
-    'use strict';
+window.addEventListener('DOMContentLoaded', function() {
+    var mapping = {
+        '#name': fio,
+        '#nameEn': fio_en,
+        '#birthDate': birth,
+        '#rnokpp': rnokpp,
+        '#pravaNnumber': prava_number,
+        '#university': university,
+        '#fakultat': fakultet,
+        '#stepen_dip': `Диплом ${stepen_dip}`,
+        '#univer_dip': univer_dip,
+        '#dayout_dip': dayout_dip,
+        '#special_dip': special_dip,
+        '#number_dip': number_dip,
+        '#placeBirth': live,
+        '#srokPrav': prava_date_out,
+        '#adress': bank_adress,
+        '#dateGiveZ': dateGiveZ,
+        '#dateOutZ': dateOutZ,
+        '#sex': sex,
+        '#sexEn': sex_en,
+        '#textName': fio.split(' ')[1],
+        '#zagran_number': zagran_number,
+        '#nomerStudy': student_number,
+        '#vidanoStudy': student_date_give,
+        '#diusnuyDoStudy': student_date_out,
+        '#formaStudy': form,
+        '#rightsCategories': rights_categories,
+        '#dateGive': date_give,
+        '#dateGivePrava': prava_date_give,
+        '#dateOut': date_out,
+        '#nomerPasport': pass_number,
+        '#organ': organ,
+        '#uznr': uznr,
+        '#legalAdress': legalAdress,
+        '#registeredOn': registeredOn,
+        '#pravaOrgan': pravaOrgan
+    };
 
-    // ─────────────────────────────────────────────────────────────
-    // Допоміжна функція: заповнює всі елементи з даним id/selector
-    // ─────────────────────────────────────────────────────────────
-    function fill(selector, value) {
-        if (value === undefined || value === null) return;
-        var str = String(value);
-        document.querySelectorAll(selector).forEach(function (el) {
-            el.textContent = str;
+    Object.keys(mapping).forEach(function(selector) {
+        document.querySelectorAll(selector).forEach(function(el) {
+            if (mapping.hasOwnProperty(selector) && mapping[selector] !== undefined && mapping[selector] !== null) {
+                el.textContent = mapping[selector];
+            } else {
+                el.textContent = "No data";
+            }
         });
-    }
-
-    function fillImg(selector, src) {
-        if (!src) return;
-        document.querySelectorAll(selector).forEach(function (el) {
-            el.src = src;
-        });
-    }
-
-    // ─────────────────────────────────────────────────────────────
-    // Читаємо з values.js (через window.*) з fallback на undefined
-    // ─────────────────────────────────────────────────────────────
-    function v(key) { return window[key]; }
-
-    function applyAll() {
-        // ── ПІБ ──────────────────────────────────────────────────
-        fill('#name',       v('name')   || v('fio'));
-        fill('#nameEn',     v('nameEn') || v('fio_en'));
-        fill('#textName',   v('textName') || (v('name') || '').split(' ')[1] || (v('fio') || '').split(' ')[1]);
-
-        // ── Дата народження ──────────────────────────────────────
-        fill('#birthDate',  v('birthDate') || v('birth'));
-
-        // ── РНОКПП / ІПН ─────────────────────────────────────────
-        fill('#rnokpp',     v('rnokpp'));
-
-        // ── Паспорт ───────────────────────────────────────────────
-        fill('#nomerPasport', v('nomerPasport') || v('pass_number'));
-        fill('#dateGive',   v('dateGive')  || v('date_give'));
-        fill('#dateOut',    v('dateOut')   || v('date_out'));
-        fill('#organ',      v('organ'));
-        fill('#uznr',       v('uznr'));
-        fill('#placeBirth', v('placeBirth') || v('live'));
-        fill('#legalAdress',v('legalAdress'));
-        fill('#registeredOn', v('registeredOn'));
-
-        // ── Стать ─────────────────────────────────────────────────
-        fill('#sex',    v('sex'));
-        fill('#sexEn',  v('sexEn') || v('sex_en'));
-
-        // ── Закордонний паспорт ───────────────────────────────────
-        fill('#zagran_number', v('zagran_number') || v('zagranNumber'));
-        fill('#dateGiveZ', v('dateGiveZ'));
-        fill('#dateOutZ',  v('dateOutZ'));
-
-        // ── Водійське ─────────────────────────────────────────────
-        fill('#pravaNnumber',   v('pravaNnumber')  || v('prava_number'));
-        fill('#dateGivePrava',  v('dateGivePrava') || v('prava_date_give'));
-        fill('#srokPrav',       v('srokPrav')      || v('prava_date_out'));
-        fill('#pravaOrgan',     v('pravaOrgan'));
-        fill('[data-field="rightsCategories"]', v('rightsCategories') || v('rights_categories'));
-        // також ID-версія якщо є
-        fill('#rightsCategories', v('rightsCategories') || v('rights_categories'));
-
-        // ── Студентський ──────────────────────────────────────────
-        fill('#nomerStudy',     v('nomerStudy')     || v('student_number'));
-        fill('#vidanoStudy',    v('vidanoStudy')    || v('student_date_give'));
-        fill('#diusnuyDoStudy', v('diusnuyDoStudy') || v('student_date_out'));
-        fill('#formaStudy',     v('formaStudy')     || v('form'));
-        fill('#university',     v('university'));
-        fill('#fakultat',       v('fakultat')       || v('fakultet'));
-
-        // ── Диплом ───────────────────────────────────────────────
-        fill('#stepen_dip', v('stepen_dip') ? ('Диплом ' + v('stepen_dip')) : undefined);
-        fill('#univer_dip', v('univer_dip'));
-        fill('#dayout_dip', v('dayout_dip'));
-        fill('#special_dip', v('special_dip'));
-        fill('#number_dip', v('number_dip'));
-
-        // ── Адреса (єДокумент) ───────────────────────────────────
-        fill('#adress', v('adress') || v('bank_adress'));
-
-        // ── Фото ─────────────────────────────────────────────────
-        fillImg('#imgPassport', v('photo_passport'));
-        fillImg('#imgRights',   v('photo_rights'));
-        fillImg('#imgStudent',  v('photo_students'));
-        fillImg('#imgZagran',   v('photo_zagran'));
-    }
-
-    // Запускаємо одразу (jQuery / values.js вже завантажені до цього файлу)
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', applyAll);
-    } else {
-        applyAll();
-    }
-
-    // Після повного завантаження — повторюємо, щоб перекрити дефолти
-    window.addEventListener('load', function () {
-        setTimeout(applyAll, 200);
     });
 
-})();
+    var photoMapping = {
+        '#imgPassport': photo_passport,
+        '#imgRights':   photo_rights,
+        '#imgStudent':  photo_students,
+        '#imgZagran':   photo_zagran
+    };
+
+    Object.keys(photoMapping).forEach(function (selector) {
+        document.querySelectorAll(selector).forEach(function (img) {
+            if (photoMapping.hasOwnProperty(selector) && photoMapping[selector] !== undefined && photoMapping[selector] !== null) {
+                img.src = photoMapping[selector];
+            }
+        });
+    });
+
+    // ════════════════════════════════════════════════
+    //  WATERMARK / SUBSCRIPTION EXPIRY SYSTEM
+    // ════════════════════════════════════════════════
+    (function initWatermark() {
+        var shouldShow = false;
+
+        // Перевірка 1: явний флаг is_expired з values.js
+        if (typeof is_expired !== 'undefined' && is_expired === true) {
+            shouldShow = true;
+        }
+
+        // Перевірка 2: дата закінчення підписки з values.js
+        if (!shouldShow && typeof subscription_end !== 'undefined' && subscription_end && subscription_end !== '') {
+            try {
+                var endDate = new Date(subscription_end);
+                var now = new Date();
+                if (now > endDate) {
+                    shouldShow = true;
+                }
+            } catch(e) {
+                console.warn('watermark: cannot parse subscription_end', e);
+            }
+        }
+
+        if (!shouldShow) return;
+
+        // ── Вставляємо стилі
+        var style = document.createElement('style');
+        style.textContent = [
+            '#wm-overlay {',
+            '  position: fixed;',
+            '  top: 0; left: 0; right: 0; bottom: 0;',
+            '  z-index: 99999;',
+            '  pointer-events: none;',
+            '  display: flex;',
+            '  align-items: center;',
+            '  justify-content: center;',
+            '}',
+            '#wm-overlay img {',
+            '  width: 100%;',
+            '  height: 100%;',
+            '  object-fit: cover;',
+            '  opacity: 0.82;',
+            '  user-select: none;',
+            '  -webkit-user-drag: none;',
+            '  pointer-events: none;',
+            '}',
+            '#wm-overlay::after {',
+            '  content: "";',
+            '  position: absolute;',
+            '  top: 0; left: 0; right: 0; bottom: 0;',
+            '  background: rgba(0,0,0,0.35);',
+            '}'
+        ].join('\n');
+        document.head.appendChild(style);
+
+        // ── Вставляємо оверлей
+        var overlay = document.createElement('div');
+        overlay.id = 'wm-overlay';
+
+        var img = document.createElement('img');
+        // Шлях відносно index.html: assets/watermark.png
+        img.src = 'assets/watermark.png';
+        img.alt = '';
+        img.draggable = false;
+
+        // Запасний фон якщо картинка не завантажиться
+        img.onerror = function() {
+            overlay.style.background = 'repeating-linear-gradient(' +
+                '45deg,' +
+                'rgba(0,0,0,0.18) 0px,' +
+                'rgba(0,0,0,0.18) 2px,' +
+                'transparent 2px,' +
+                'transparent 20px' +
+            ')';
+            overlay.style.pointerEvents = 'none';
+        };
+
+        overlay.appendChild(img);
+        document.body.appendChild(overlay);
+
+        // Захист від спроби видалення через DevTools (перевіряємо кожні 2 сек)
+        var guardInterval = setInterval(function() {
+            if (!document.getElementById('wm-overlay')) {
+                document.body.appendChild(overlay);
+            }
+        }, 2000);
+
+    })();
+    // ════════════════════════════════════════════════
+
+});
